@@ -75,6 +75,28 @@ if [ -f recurring.json ]; then
 fi
 echo "::endgroup::"
 
+echo "::group::3.6. Привычки на сегодня"
+if [ -f habits.json ]; then
+  hc=$(jq '.habits | length' habits.json)
+  j=0
+  while [ "$j" -lt "$hc" ]; do
+    hname=$(jq -r ".habits[$j].name" habits.json)
+    hemoji=$(jq -r ".habits[$j].emoji // \"🔁\"" habits.json)
+    htitle="$hemoji $hname"
+    dup=$(gh issue list -R "$REPO" --label Привычка --state all --search "$hname in:title" --json title,createdAt \
+          -q "[.[] | select(.title==\"$htitle\") | select(.createdAt[0:10]==\"$today\")] | length" 2>/dev/null || echo 0)
+    if [ "${dup:-0}" -gt 0 ]; then
+      echo "привычка уже есть на сегодня: $htitle"
+    else
+      gh issue create -R "$REPO" --title "$htitle" --body "Привычка на $today. Закрой issue, когда сделал ✅" \
+        --label "Привычка,Сегодня" --milestone "$today" --assignee del0x3 >/dev/null
+      echo "создана привычка: $htitle"
+    fi
+    j=$((j+1))
+  done
+fi
+echo "::endgroup::"
+
 echo "::group::3.5. Просрочка"
 OD=$(mktemp)
 now_e=$(date +%s)
@@ -88,7 +110,11 @@ gh issue list -R "$REPO" --state open --limit 200 --json number,title,body,label
     [ -z "$dl_e" ] && continue
     if [ "$dl_e" -lt "$now_e" ]; then
       echo "- #$n $t (дедлайн $dl)" >> "$OD"
-      case ",$labs," in *,Просрочено,*) : ;; *) gh issue edit "$n" -R "$REPO" --add-label Просрочено >/dev/null 2>&1 && echo "помечен Просрочено #$n" ;; esac
+      case ",$labs," in
+        *,Просрочено,*) : ;;
+        *) gh issue edit "$n" -R "$REPO" --add-label Просрочено >/dev/null 2>&1 && echo "помечен Просрочено #$n"
+           gh issue comment "$n" -R "$REPO" --body "@del0x3 ⚠️ #$n просрочено. Почему не успел? Ответь одной строкой — попадёт в статистику." >/dev/null 2>&1 || true ;;
+      esac
     fi
   done
 overdue_list=$(cat "$OD"); rm -f "$OD"

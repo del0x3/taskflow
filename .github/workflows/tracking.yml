@@ -1,0 +1,22 @@
+name: Трекинг времени
+
+on:
+  issues:
+    types: [labeled, closed, reopened]
+
+permissions:
+  issues: write
+
+jobs:
+  track:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REPO: ${{ github.repository }}
+      NUM: ${{ github.event.issue.number }}
+      ACTION: ${{ github.event.action }}
+      LABEL: ${{ github.event.label.name }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Трекинг
+        run: bash .github/scripts/tracking.sh

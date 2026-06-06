@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TaskFlow — аналитика</title>
+<script src="./chart.umd.min.js"></script>
+<style>
+  :root{--bg:#0d1117;--card:#161b22;--bd:#30363d;--tx:#e6edf3;--mut:#8b949e;--acc:#1f6feb;--ok:#2ea043;--warn:#d29922;--bad:#f85149}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 -apple-system,Segoe UI,Roboto,sans-serif;padding:16px;max-width:1100px;margin:0 auto}
+  h1{font-size:22px;margin:4px 0 2px} .sub{color:var(--mut);font-size:13px;margin-bottom:18px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:18px}
+  .kpi{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px}
+  .kpi .v{font-size:28px;font-weight:700} .kpi .l{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.03em}
+  .kpi.ok .v{color:var(--ok)} .kpi.warn .v{color:var(--warn)} .kpi.bad .v{color:var(--bad)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:720px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:14px}
+  .card h2{font-size:15px;margin:0 0 12px;color:var(--tx)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--bd);vertical-align:top}
+  th{color:var(--mut);font-weight:600}
+  .hb{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bd)}
+  .hb:last-child{border:0}
+  .streak{font-weight:700;color:var(--warn)} .dots{display:flex;gap:3px}
+  .dot{width:14px;height:14px;border-radius:4px;background:#21262d} .dot.on{background:var(--ok)}
+  .badge{font-size:11px;padding:1px 7px;border-radius:10px;background:#21262d;color:var(--mut)}
+  a{color:var(--acc)}
+</style>
+</head>
+<body>
+  <h1>📊 TaskFlow — аналитика</h1>
+  <div class="sub" id="gen">загрузка…</div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="grid">
+    <div class="card"><h2>Прогресс / регресс (по неделям)</h2><canvas id="trend" height="200"></canvas></div>
+    <div class="card"><h2>Открытые по категориям</h2><canvas id="cats" height="200"></canvas></div>
+    <div class="card"><h2>Открытые по статусам</h2><canvas id="statuses" height="200"></canvas></div>
+    <div class="card"><h2>Затраченное время по категориям (мин)</h2><canvas id="spent" height="200"></canvas></div>
+  </div>
+
+  <div class="card"><h2>🔁 Привычки — стрики</h2><div id="habits"></div></div>
+
+  <div class="card"><h2>⚠️ Что пошло не так — просрочки и причины</h2>
+    <table id="overdue"><thead><tr><th>#</th><th>Задача</th><th>Категория</th><th>Просрочка</th><th>Причина</th></tr></thead><tbody></tbody></table>
+  </div>
+
+<script>
+const C={tx:'#e6edf3',mut:'#8b949e',acc:'#1f6feb',ok:'#2ea043',warn:'#d29922',bad:'#f85149',
+  pie:['#1f6feb','#bf3989','#0891b2','#16a34a','#d29922','#8b949e']};
+Chart.defaults.color=C.mut; Chart.defaults.borderColor='#30363d'; Chart.defaults.font.family='inherit';
+
+fetch('data.json?_='+Date.now()).then(r=>r.json()).then(d=>{
+  document.getElementById('gen').textContent='обновлено: '+new Date(d.generatedAt).toLocaleString('ru-RU');
+  const k=d.kpi;
+  const kp=[
+    ['Открыто',k.open,''],['Сегодня',k.today,''],['Просрочено',k.overdue,k.overdue>0?'bad':'ok'],
+    ['Закрыто за неделю',k.closedWeek,'ok'],['Закрыто за месяц',k.closedMonth,'ok'],
+    ['% выполнения',k.completionRate+'%',k.completionRate>=60?'ok':'warn'],
+    ['Ср. время/задача',k.avgSpentMin?Math.round(k.avgSpentMin/60*10)/10+'ч':'—','']
+  ];
+  document.getElementById('kpis').innerHTML=kp.map(([l,v,c])=>
+    `<div class="kpi ${c}"><div class="v">${v}</div><div class="l">${l}</div></div>`).join('');
+
+  new Chart(trend,{type:'line',data:{labels:d.weeks.map(w=>w.week.slice(5)),
+    datasets:[{label:'Создано',data:d.weeks.map(w=>w.created),borderColor:C.acc,backgroundColor:C.acc+'33',tension:.3,fill:true},
+              {label:'Закрыто',data:d.weeks.map(w=>w.closed),borderColor:C.ok,backgroundColor:C.ok+'33',tension:.3,fill:true}]},
+    options:{plugins:{legend:{labels:{color:C.tx}}},scales:{y:{beginAtZero:true,ticks:{precision:0}}}}});
+
+  const donut=(id,obj)=>{const e=Object.entries(obj||{});new Chart(document.getElementById(id),
+    {type:'doughnut',data:{labels:e.map(x=>x[0]),datasets:[{data:e.map(x=>x[1]),backgroundColor:C.pie}]},
+     options:{plugins:{legend:{position:'right',labels:{color:C.tx,boxWidth:12}}}}});};
+  donut('cats',d.categories); donut('statuses',d.statuses);
+
+  const se=Object.entries(d.spentByCategory||{});
+  new Chart(spent,{type:'bar',data:{labels:se.map(x=>x[0]),datasets:[{data:se.map(x=>x[1]),backgroundColor:C.pie}]},
+    options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
+
+  document.getElementById('habits').innerHTML=(d.habits||[]).length?d.habits.map(h=>
+    `<div class="hb"><div style="flex:1">${h.name} ${h.doneToday?'<span class="badge">сегодня ✅</span>':''}</div>
+     <span class="streak">🔥 ${h.streak} дн.</span>
+     <div class="dots">${h.last7.map(v=>`<div class="dot ${v?'on':''}"></div>`).join('')}</div></div>`).join('')
+    :'<div style="color:#8b949e">привычек пока нет</div>';
+
+  const tb=document.querySelector('#overdue tbody');
+  tb.innerHTML=(d.overdueList||[]).length?d.overdueList.map(o=>
+    `<tr><td><a href="https://github.com/del0x3/taskflow/issues/${o.num}">#${o.num}</a></td>
+     <td>${o.title}</td><td>${o.category}</td><td>${o.lateHours}ч</td>
+     <td>${o.reason?o.reason:'<span style="color:#8b949e">—</span>'}</td></tr>`).join('')
+    :'<tr><td colspan="5" style="color:#8b949e">просрочек нет 🎉</td></tr>';
+}).catch(e=>{document.getElementById('gen').textContent='ошибка загрузки data.json: '+e;});
+</script>
+</body>
+</html>
