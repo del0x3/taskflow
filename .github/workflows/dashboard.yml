@@ -1,0 +1,37 @@
+name: Доска
+
+on:
+  issues:
+    types: [opened, closed, reopened, edited, labeled, unlabeled, assigned, unassigned, milestoned, demilestoned]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: taskflow-dashboard
+  cancel-in-progress: true
+
+jobs:
+  dashboard:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REPO: ${{ github.repository }}
+      TZL: Europe/Kiev
+    steps:
+      - uses: actions/checkout@v4
+      - name: Сборка доски
+        run: bash .github/scripts/dashboard.sh
+      - name: Коммит DASHBOARD.md
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A DASHBOARD.md
+          if git diff --cached --quiet; then
+            echo "доска без изменений"
+          else
+            git commit -m "chore: обновление доски задач"
+            git push
+          fi

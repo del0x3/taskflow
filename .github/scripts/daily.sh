@@ -87,17 +87,6 @@ ${still:-—}
 ${overdue_list:-—}
 EOF
 echo "записан digests/daily/$yest.md"
-
-# Постоянный issue «Текущий дайджест» (один, перезаписывается -> пуш)
-board=$(gh issue list -R "$REPO" --label Дайджест-доска --state open --json number -q '.[0].number' || true)
-dbody=$(cat "digests/daily/$yest.md")
-if [ -z "$board" ]; then
-  gh issue create -R "$REPO" --title "📊 Текущий дайджест" --body "$dbody" --label Дайджест-доска >/dev/null
-  echo "создан issue «Текущий дайджест»"
-else
-  gh issue edit "$board" -R "$REPO" --body "$dbody" >/dev/null
-  echo "обновлён issue «Текущий дайджест» (#$board)"
-fi
 echo "::endgroup::"
 
 echo "::group::4.5. Еженедельное ревью (воскресенье)"
@@ -117,11 +106,6 @@ ${rev_done:-—}
 ${rev_open:-—}
 EOF
   echo "записан digests/reviews/$wkr.md"
-  brd=$(gh issue list -R "$REPO" --label Дайджест-доска --state open --json number -q '.[0].number' || true)
-  if [ -n "$brd" ]; then
-    gh issue edit "$brd" -R "$REPO" --body "$(cat "digests/reviews/$wkr.md")" >/dev/null
-    echo "ревью отправлено в «Текущий дайджест» (#$brd) — придёт пуш"
-  fi
 else
   echo "не воскресенье — пропуск"
 fi
@@ -167,6 +151,10 @@ if [ "$dom" = "01" ] && [ "$mon" = "01" ]; then
   py=$(TZ="$TZL" date -d 'yesterday' +%Y)
   rollup "Годовой дайджест $py" "digests/yearly/$py.md" "digests/quarterly"
 fi
+echo "::endgroup::"
+
+echo "::group::6. Дашборд"
+bash .github/scripts/dashboard.sh || echo "дашборд: ошибка (не критично)"
 echo "::endgroup::"
 
 echo "Готово."
