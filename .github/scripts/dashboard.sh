@@ -24,8 +24,8 @@ st_name(){ local b="${BST[$1]:-}"
 
 TMP=$(mktemp); ROWS=$(mktemp)
 gh issue list -R "$REPO" --state open --limit 300 \
-  --json number,title,labels,milestone,body \
-  -q '.[] | select([.labels[].name] | (index("Доска") or index("Привычка")) | not) | [.number, .title, ([.labels[].name]|join("|")), (.milestone.title // "—"), (.body|@base64)] | @tsv' > "$TMP"
+  --json number,title,labels,milestone,body,author \
+  -q '.[] | select(.author.login=="del0x3" or .author.login=="github-actions[bot]") | select([.labels[].name] | (index("Доска") or index("Привычка")) | not) | [.number, .title, ([.labels[].name]|join("|")), (.milestone.title // "—"), (.body|@base64)] | @tsv' > "$TMP"
 
 today_n=0; over_n=0; hot_n=0
 while IFS=$'\t' read -r num title labels ms b64; do

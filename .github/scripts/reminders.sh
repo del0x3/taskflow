@@ -24,8 +24,8 @@ gh issue list -R "$REPO" --state open --json number -q '.[].number' | while read
 done
 
 # --- 2. Рассылка напоминаний ---
-gh issue list -R "$REPO" --state open --limit 200 --json number,body,labels \
-  -q '.[] | [.number, ([.labels[].name] | join(",")), (.body|@base64)] | @tsv' \
+gh issue list -R "$REPO" --state open --limit 200 --json number,body,labels,author \
+  -q '.[] | select(.author.login=="del0x3" or .author.login=="github-actions[bot]") | [.number, ([.labels[].name] | join(",")), (.body|@base64)] | @tsv' \
 | while IFS=$'\t' read -r num labels body_b64; do
     [ -z "$num" ] && continue
     body=$(printf '%s' "$body_b64" | base64 -d)

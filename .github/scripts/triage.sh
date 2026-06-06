@@ -5,6 +5,9 @@ REPO="${REPO:-del0x3/taskflow}"
 NUM="${NUM:?нужен NUM}"
 TZL="${TZL:-Europe/Kiev}"
 
+# Публичный репо: обрабатываем только issue от владельца
+[ "${AUTHOR:-}" = "del0x3" ] || { echo "issue не от владельца (${AUTHOR:-?}) — пропуск"; exit 0; }
+
 body=$(gh issue view "$NUM" -R "$REPO" --json body -q '.body')
 printf '%s' "$body" | grep -q '### Приоритет' || { echo "не из формы — пропуск"; exit 0; }
 

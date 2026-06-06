@@ -100,8 +100,8 @@ echo "::endgroup::"
 echo "::group::3.5. Просрочка"
 OD=$(mktemp)
 now_e=$(date +%s)
-gh issue list -R "$REPO" --state open --limit 200 --json number,title,body,labels \
-  -q '.[] | [.number, .title, ([.labels[].name]|join(",")), (.body|@base64)] | @tsv' \
+gh issue list -R "$REPO" --state open --limit 200 --json number,title,body,labels,author \
+  -q '.[] | select(.author.login=="del0x3" or .author.login=="github-actions[bot]") | [.number, .title, ([.labels[].name]|join(",")), (.body|@base64)] | @tsv' \
 | while IFS=$'\t' read -r n t labs b64; do
     bd=$(printf '%s' "$b64" | base64 -d)
     dl=$(printf '%s' "$bd" | grep -oP 'Дедлайн:\s*\K[0-9]{4}-[0-9]{2}-[0-9]{2}[ T][0-9]{2}:[0-9]{2}' | head -1 || true)
