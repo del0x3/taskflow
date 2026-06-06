@@ -54,6 +54,8 @@
 const C={tx:'#e6edf3',mut:'#8b949e',acc:'#1f6feb',ok:'#2ea043',warn:'#d29922',bad:'#f85149',
   pie:['#1f6feb','#bf3989','#0891b2','#16a34a','#d29922','#8b949e']};
 Chart.defaults.color=C.mut; Chart.defaults.borderColor='#30363d'; Chart.defaults.font.family='inherit';
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const numOr=(v,d)=>Number.isFinite(+v)?+v:d;
 
 fetch('data.json?_='+Date.now()).then(r=>r.json()).then(d=>{
   document.getElementById('gen').textContent='обновлено: '+new Date(d.generatedAt).toLocaleString('ru-RU');
@@ -82,9 +84,9 @@ fetch('data.json?_='+Date.now()).then(r=>r.json()).then(d=>{
     options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
 
   document.getElementById('habits').innerHTML=(d.habits||[]).length?d.habits.map(h=>
-    `<div class="hb"><div style="flex:1">${h.name} ${h.doneToday?'<span class="badge">сегодня ✅</span>':''}</div>
-     <span class="streak">🔥 ${h.streak} дн.</span>
-     <div class="dots">${h.last7.map(v=>`<div class="dot ${v?'on':''}"></div>`).join('')}</div></div>`).join('')
+    `<div class="hb"><div style="flex:1">${esc(h.name)} ${h.doneToday?'<span class="badge">сегодня ✅</span>':''}</div>
+     <span class="streak">🔥 ${numOr(h.streak,0)} дн.</span>
+     <div class="dots">${(h.last7||[]).map(v=>`<div class="dot ${v?'on':''}"></div>`).join('')}</div></div>`).join('')
     :'<div style="color:#8b949e">привычек пока нет</div>';
 
   const rr=d.overdueReasons||{};
@@ -100,9 +102,9 @@ fetch('data.json?_='+Date.now()).then(r=>r.json()).then(d=>{
 
   const tb=document.querySelector('#overdue tbody');
   tb.innerHTML=(d.overdueList||[]).length?d.overdueList.map(o=>
-    `<tr><td><a href="https://github.com/del0x3/taskflow/issues/${o.num}">#${o.num}</a></td>
-     <td>${o.title}</td><td>${o.category}</td><td>${tbadge(o.type)}</td><td>${o.lateHours}ч</td>
-     <td>${o.reason?o.reason:'<span style="color:#8b949e">—</span>'}</td></tr>`).join('')
+    `<tr><td><a href="https://github.com/del0x3/taskflow/issues/${numOr(o.num,0)}">#${numOr(o.num,0)}</a></td>
+     <td>${esc(o.title)}</td><td>${esc(o.category)}</td><td>${tbadge(o.type)}</td><td>${numOr(o.lateHours,0)}ч</td>
+     <td>${o.reason?esc(o.reason):'<span style="color:#8b949e">—</span>'}</td></tr>`).join('')
     :'<tr><td colspan="6" style="color:#8b949e">просрочек нет 🎉</td></tr>';
 }).catch(e=>{document.getElementById('gen').textContent='ошибка загрузки data.json: '+e;});
 </script>

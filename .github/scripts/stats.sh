@@ -107,14 +107,21 @@ overdue="${overdue%,}]"; [ "$overdue" = "]" ] && overdue="[]"
 reasons="{\"объективные\":$oc_obj,\"субъективные\":$oc_subj,\"неуказано\":$oc_un}"
 
 # ---------- Сборка ----------
+[ -z "$cats" ] && cats='{}'
+[ -z "$stats" ] && stats='{}'
+[ -z "$spentcat" ] && spentcat='{}'
+[ -z "$reasons" ] && reasons='{}'
+[ -z "$weeks" ] && weeks='[]'
+[ -z "$habits" ] && habits='[]'
+[ -z "$overdue" ] && overdue='[]'
 jq -n \
   --arg gen "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
   --argjson open "$open" --argjson today "$todayN" --argjson overdue "$overdueN" \
   --argjson closedToday "$closedToday" --argjson closedWeek "$closedWeek" --argjson closedMonth "$closedMonth" \
   --argjson rate "$rate" --argjson avgSpent "$avgSpent" \
-  --argjson weeks "$weeks" --argjson cats "${cats:-{}}" --argjson statuses "${stats:-{}}" \
-  --argjson spentcat "${spentcat:-{}}" --argjson habits "$habits" --argjson overdueList "$overdue" \
-  --argjson reasons "${reasons:-{}}" \
+  --argjson weeks "$weeks" --argjson cats "$cats" --argjson statuses "$stats" \
+  --argjson spentcat "$spentcat" --argjson habits "$habits" --argjson overdueList "$overdue" \
+  --argjson reasons "$reasons" \
   '{generatedAt:$gen, kpi:{open:$open,today:$today,overdue:$overdue,closedToday:$closedToday,closedWeek:$closedWeek,closedMonth:$closedMonth,completionRate:$rate,avgSpentMin:$avgSpent}, weeks:$weeks, categories:$cats, statuses:$statuses, spentByCategory:$spentcat, habits:$habits, overdueReasons:$reasons, overdueList:$overdueList}' \
   > docs/data.json
 rm -f "$ISS"
