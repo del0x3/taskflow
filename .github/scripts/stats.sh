@@ -85,8 +85,8 @@ if [ -f habits.json ]; then
   [ "$habits" = "]" ] && habits="[]"
 fi
 
-# ---------- Просрочки с причинами ----------
-overdue="["
+# ---------- Просрочки с причинами (объективные/субъективные) ----------
+overdue="["; oc_obj=0; oc_subj=0; oc_un=0
 while read -r num; do
   [ -z "$num" ] && continue
   ob=$(jq -r --argjson n "$num" '.[] | select(.number==$n) | .body' "$ISS")
@@ -95,9 +95,16 @@ while read -r num; do
   dl=$(printf '%s' "$ob" | grep -oP 'Дедлайн:\s*\K[0-9]{4}-[0-9]{2}-[0-9]{2}[ T][0-9]{2}:[0-9]{2}' | head -1 || true)
   late=0; [ -n "$dl" ] && { de=$(TZ="$TZL" date -d "${dl/T/ }" +%s 2>/dev/null||echo "$now_e"); late=$(( (now_e - de)/3600 )); }
   reason=$(gh api "repos/$REPO/issues/$num/comments" -q '[.[] | select(.user.login!="github-actions[bot]")] | last | .body // ""' 2>/dev/null | tr '\n' ' ' || echo "")
-  overdue="$overdue$(jq -nc --argjson n "$num" --arg t "$ot" --arg c "$oc" --argjson l "$late" --arg r "$reason" '{num:$n,title:$t,category:$c,lateHours:$l,reason:$r}'),"
+  rtype="не указано"
+  case "$reason" in
+    *объектив*|*Объектив*|*"был занят"*|*важн*|*блокер*|*блок*) rtype="объективная";;
+    *лень*|*Лень*|*прокраст*|*Прокраст*|*забил*|*субъектив*) rtype="субъективная";;
+  esac
+  case "$rtype" in объективная) oc_obj=$((oc_obj+1));; субъективная) oc_subj=$((oc_subj+1));; *) oc_un=$((oc_un+1));; esac
+  overdue="$overdue$(jq -nc --argjson n "$num" --arg t "$ot" --arg c "$oc" --argjson l "$late" --arg r "$reason" --arg rt "$rtype" '{num:$n,title:$t,category:$c,lateHours:$l,reason:$r,type:$rt}'),"
 done < <(jq -r "$jqf | .[] | select(.state==\"OPEN\") | select([.labels[].name]|index(\"Просрочено\")) | .number" "$ISS")
 overdue="${overdue%,}]"; [ "$overdue" = "]" ] && overdue="[]"
+reasons="{\"объективные\":$oc_obj,\"субъективные\":$oc_subj,\"неуказано\":$oc_un}"
 
 # ---------- Сборка ----------
 jq -n \
@@ -107,7 +114,8 @@ jq -n \
   --argjson rate "$rate" --argjson avgSpent "$avgSpent" \
   --argjson weeks "$weeks" --argjson cats "${cats:-{}}" --argjson statuses "${stats:-{}}" \
   --argjson spentcat "${spentcat:-{}}" --argjson habits "$habits" --argjson overdueList "$overdue" \
-  '{generatedAt:$gen, kpi:{open:$open,today:$today,overdue:$overdue,closedToday:$closedToday,closedWeek:$closedWeek,closedMonth:$closedMonth,completionRate:$rate,avgSpentMin:$avgSpent}, weeks:$weeks, categories:$cats, statuses:$statuses, spentByCategory:$spentcat, habits:$habits, overdueList:$overdueList}' \
+  --argjson reasons "${reasons:-{}}" \
+  '{generatedAt:$gen, kpi:{open:$open,today:$today,overdue:$overdue,closedToday:$closedToday,closedWeek:$closedWeek,closedMonth:$closedMonth,completionRate:$rate,avgSpentMin:$avgSpent}, weeks:$weeks, categories:$cats, statuses:$statuses, spentByCategory:$spentcat, habits:$habits, overdueReasons:$reasons, overdueList:$overdueList}' \
   > docs/data.json
 rm -f "$ISS"
 echo "docs/data.json готов: open=$open closed=$closedAll rate=${rate}% avgSpent=${avgSpent}м"

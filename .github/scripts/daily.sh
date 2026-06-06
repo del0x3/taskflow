@@ -113,7 +113,9 @@ gh issue list -R "$REPO" --state open --limit 200 --json number,title,body,label
       case ",$labs," in
         *,Просрочено,*) : ;;
         *) gh issue edit "$n" -R "$REPO" --add-label Просрочено >/dev/null 2>&1 && echo "помечен Просрочено #$n"
-           gh issue comment "$n" -R "$REPO" --body "@del0x3 ⚠️ #$n просрочено. Почему не успел? Ответь одной строкой — попадёт в статистику." >/dev/null 2>&1 || true ;;
+           gh issue comment "$n" -R "$REPO" --body "@del0x3 ⚠️ #$n просрочено. Почему? Ответь честно — для статистики поведения:
+• «объективно: …» — был занят важным / внешний блокер
+• «лень: …» — прокрастинация, лень, забил" >/dev/null 2>&1 || true ;;
       esac
     fi
   done

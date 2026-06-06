@@ -45,7 +45,9 @@
   <div class="card"><h2>🔁 Привычки — стрики</h2><div id="habits"></div></div>
 
   <div class="card"><h2>⚠️ Что пошло не так — просрочки и причины</h2>
-    <table id="overdue"><thead><tr><th>#</th><th>Задача</th><th>Категория</th><th>Просрочка</th><th>Причина</th></tr></thead><tbody></tbody></table>
+    <div id="reasonSummary" class="sub"></div>
+    <div style="max-width:300px;margin:0 auto 14px"><canvas id="reasons" height="180"></canvas></div>
+    <table id="overdue"><thead><tr><th>#</th><th>Задача</th><th>Категория</th><th>Тип</th><th>Просрочка</th><th>Причина</th></tr></thead><tbody></tbody></table>
   </div>
 
 <script>
@@ -85,12 +87,23 @@ fetch('data.json?_='+Date.now()).then(r=>r.json()).then(d=>{
      <div class="dots">${h.last7.map(v=>`<div class="dot ${v?'on':''}"></div>`).join('')}</div></div>`).join('')
     :'<div style="color:#8b949e">привычек пока нет</div>';
 
+  const rr=d.overdueReasons||{};
+  const ro=rr['объективные']||0, rs=rr['субъективные']||0, ru=rr['неуказано']||0;
+  document.getElementById('reasonSummary').textContent=
+    `Объективные: ${ro} · 😴 Прокрастинация/лень: ${rs} · Не указано: ${ru}`;
+  new Chart(reasons,{type:'doughnut',data:{labels:['Объективные','Прокрастинация/лень','Не указано'],
+    datasets:[{data:[ro,rs,ru],backgroundColor:[C.ok,C.bad,C.mut]}]},
+    options:{plugins:{legend:{position:'bottom',labels:{color:C.tx,boxWidth:12}}}}});
+  const tbadge=t=>t==='объективная'?`<span class="badge" style="color:#2ea043">объективная</span>`
+    :t==='субъективная'?`<span class="badge" style="color:#f85149">😴 лень</span>`
+    :`<span class="badge">—</span>`;
+
   const tb=document.querySelector('#overdue tbody');
   tb.innerHTML=(d.overdueList||[]).length?d.overdueList.map(o=>
     `<tr><td><a href="https://github.com/del0x3/taskflow/issues/${o.num}">#${o.num}</a></td>
-     <td>${o.title}</td><td>${o.category}</td><td>${o.lateHours}ч</td>
+     <td>${o.title}</td><td>${o.category}</td><td>${tbadge(o.type)}</td><td>${o.lateHours}ч</td>
      <td>${o.reason?o.reason:'<span style="color:#8b949e">—</span>'}</td></tr>`).join('')
-    :'<tr><td colspan="5" style="color:#8b949e">просрочек нет 🎉</td></tr>';
+    :'<tr><td colspan="6" style="color:#8b949e">просрочек нет 🎉</td></tr>';
 }).catch(e=>{document.getElementById('gen').textContent='ошибка загрузки data.json: '+e;});
 </script>
 </body>
