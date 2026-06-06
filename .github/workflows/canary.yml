@@ -1,0 +1,32 @@
+name: Канарейка
+
+on:
+  schedule:
+    - cron: '0 6 * * *'   # 09:00 UTC+3, через час после ежедневного прогона
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  actions: read
+
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REPO: ${{ github.repository }}
+    steps:
+      - name: Проверка здоровья автоматики
+        run: |
+          last=$(gh run list -R "$REPO" --workflow=daily.yml --limit 1 --json conclusion,createdAt)
+          concl=$(printf '%s' "$last" | jq -r '.[0].conclusion // "none"')
+          created=$(printf '%s' "$last" | jq -r '.[0].createdAt // "1970-01-01T00:00:00Z"')
+          age=$(( ( $(date +%s) - $(date -d "$created" +%s) ) / 3600 ))
+          echo "daily: conclusion=$concl, $age ч назад"
+          if [ "$concl" != "success" ] || [ "$age" -gt 26 ]; then
+            brd=$(gh issue list -R "$REPO" --label "Доска" --state open --json number -q '.[0].number')
+            [ -n "$brd" ] && gh issue comment "$brd" -R "$REPO" --body "<!-- tf-reminder -->
+@del0x3 ⚠️ Автоматика TaskFlow: ежедневный прогон '$concl' ($age ч назад). Проверь вкладку Actions."
+          else
+            echo "всё здорово ✅"
+          fi

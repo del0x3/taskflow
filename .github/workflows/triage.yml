@@ -1,0 +1,23 @@
+name: Приёмка задач
+
+on:
+  issues:
+    types: [opened]
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REPO: ${{ github.repository }}
+      NUM: ${{ github.event.issue.number }}
+      TZL: Europe/Kiev
+    steps:
+      - uses: actions/checkout@v4
+      - name: Обработка формы
+        if: ${{ github.event.issue.number != '' }}
+        run: bash .github/scripts/triage.sh

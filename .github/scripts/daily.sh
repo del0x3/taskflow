@@ -22,12 +22,34 @@ else
 fi
 echo "::endgroup::"
 
+echo "::group::1.5. Всплытие запланированных на сегодня"
+gh issue list -R "$REPO" --milestone "$today" --state open --json number,labels \
+  -q '.[] | select([.labels[].name] | index("Сегодня") | not) | .number' \
+| while read -r n; do
+    [ -z "$n" ] && continue
+    gh issue edit "$n" -R "$REPO" --add-label Сегодня >/dev/null 2>&1 && echo "всплыла #$n -> Сегодня"
+  done
+echo "::endgroup::"
+
 echo "::group::2. Роллновер незакрытых today"
 gh issue list -R "$REPO" --label Сегодня --state open --json number -q '.[].number' | while read -r n; do
   [ -z "$n" ] && continue
   gh issue edit "$n" -R "$REPO" --milestone "$today" >/dev/null 2>&1 || true
   echo "перенесён #$n -> $today"
 done
+echo "::endgroup::"
+
+echo "::group::2.5. Залежавшиеся (>3 дней в Сегодня)"
+nowd=$(date +%s)
+gh issue list -R "$REPO" --label Сегодня --state open --json number,createdAt,labels \
+  -q '.[] | select([.labels[].name] | index("Залежалось") | not) | "\(.number)\t\(.createdAt)"' \
+| while IFS=$'\t' read -r n created; do
+    [ -z "$n" ] && continue
+    age=$(( (nowd - $(date -d "$created" +%s)) / 86400 ))
+    if [ "$age" -ge 3 ]; then
+      gh issue edit "$n" -R "$REPO" --add-label Залежалось >/dev/null 2>&1 && echo "залежалось #$n ($age дн.)"
+    fi
+  done
 echo "::endgroup::"
 
 echo "::group::3. Повторяющиеся задачи"
@@ -37,10 +59,16 @@ if [ -f recurring.json ]; then
   while [ "$i" -lt "$cnt" ]; do
     title=$(jq -r ".tasks[$i].title" recurring.json)
     labels=$(jq -r ".tasks[$i].labels | join(\",\")" recurring.json)
-    gh issue create -R "$REPO" --title "$title" \
-      --body "Повторяющаяся задача (создана автоматически на $today)." \
-      --label "$labels" --milestone "$today" >/dev/null
-    echo "создана повторяющаяся: $title"
+    dup=$(gh issue list -R "$REPO" --milestone "$today" --state open --search "$title in:title" --json title \
+          -q "[.[] | select(.title==\"$title\")] | length" 2>/dev/null || echo 0)
+    if [ "${dup:-0}" -gt 0 ]; then
+      echo "повтор уже есть на сегодня: $title (пропуск)"
+    else
+      gh issue create -R "$REPO" --title "$title" \
+        --body "Повторяющаяся задача (создана автоматически на $today)." \
+        --label "$labels" --milestone "$today" --assignee del0x3 >/dev/null
+      echo "создана повторяющаяся: $title"
+    fi
     i=$((i+1))
   done
   [ "$cnt" -eq 0 ] && echo "список пуст"

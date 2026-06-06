@@ -1,0 +1,21 @@
+name: Тесты
+
+on:
+  push:
+    paths:
+      - '.github/scripts/**'
+      - '.github/workflows/test.yml'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Проверка синтаксиса bash
+        run: |
+          for f in .github/scripts/*.sh; do
+            bash -n "$f" && echo "синтаксис ok: $f"
+          done
+      - name: Тесты сворачивания дайджестов
+        run: bash .github/scripts/test_rollup.sh

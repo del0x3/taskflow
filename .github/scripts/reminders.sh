@@ -38,18 +38,27 @@ gh issue list -R "$REPO" --state open --limit 200 --json number,body,labels \
     has_pre=$(printf ',%s,' "$labels" | grep -c ',Уведомление-до,' || true)
     has_due=$(printf ',%s,' "$labels" | grep -c ',Уведомление-в-момент,' || true)
 
-    # За 15 минут до дедлайна
-    if [ "$diff_min" -gt 0 ] && [ "$diff_min" -le 15 ] && [ "$has_pre" -eq 0 ]; then
+    # Сброс флагов, если дедлайн перенесён в будущее (>25 мин), а флаги остались
+    if [ "$diff_min" -gt 25 ]; then
+      if [ "$has_pre" -eq 1 ]; then gh issue edit "$num" -R "$REPO" --remove-label Уведомление-до >/dev/null 2>&1 || true; has_pre=0; echo "сброс флага pre #$num (перенос)"; fi
+      if [ "$has_due" -eq 1 ]; then gh issue edit "$num" -R "$REPO" --remove-label Уведомление-в-момент >/dev/null 2>&1 || true; has_due=0; echo "сброс флага due #$num (перенос)"; fi
+    fi
+
+    # Предупреждение до дедлайна: окно (0; 20] мин (с запасом на задержку cron)
+    if [ "$diff_min" -gt 0 ] && [ "$diff_min" -le 20 ] && [ "$has_pre" -eq 0 ]; then
       gh issue comment "$num" -R "$REPO" --body "$MARK
 $MENTION ⏰ Через ${diff_min} мин дедлайн: $dl_norm — #$num"
       gh issue edit "$num" -R "$REPO" --add-label Уведомление-до
       echo "pre-напоминание #$num"
     fi
 
-    # В момент дедлайна (0..5 мин после)
-    if [ "$diff_min" -le 0 ] && [ "$diff_min" -ge -5 ] && [ "$has_due" -eq 0 ]; then
+    # В момент дедлайна: окно [-90; 0] мин (догон, если cron задержался/пропустил)
+    if [ "$diff_min" -le 0 ] && [ "$diff_min" -ge -90 ] && [ "$has_due" -eq 0 ]; then
+      late=$(( -diff_min ))
+      msg="Дедлайн наступил"
+      [ "$late" -ge 6 ] && msg="Дедлайн был ${late} мин назад"
       gh issue comment "$num" -R "$REPO" --body "$MARK
-$MENTION ⏰ Дедлайн наступил: $dl_norm — #$num"
+$MENTION ⏰ $msg: $dl_norm — #$num"
       gh issue edit "$num" -R "$REPO" --add-label Уведомление-в-момент
       echo "due-напоминание #$num"
     fi

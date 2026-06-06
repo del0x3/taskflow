@@ -1,0 +1,39 @@
+name: Новая задача
+description: Завести задачу в TaskFlow (метки и доска проставятся автоматически)
+title: "[задача] "
+labels: ["Сегодня"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: Что сделать
+      description: Опиши задачу
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Приоритет
+      options:
+        - Критично
+        - Высокий
+        - Средний
+        - Низкий
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Категория
+      options:
+        - Работа
+        - Личное
+        - Учёба
+        - Здоровье
+        - Быт
+  - type: input
+    id: deadline
+    attributes:
+      label: Дедлайн (ГГГГ-ММ-ДД ЧЧ:ММ)
+      description: Оставь пустым для задачи «на день». Пример — 2026-06-10 15:00
+      placeholder: 2026-06-10 15:00

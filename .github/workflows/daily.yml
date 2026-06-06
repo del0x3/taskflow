@@ -26,14 +26,17 @@ jobs:
       - name: Ежедневный прогон
         run: bash .github/scripts/daily.sh
 
-      - name: Коммит дайджестов
+      - name: Коммит изменений
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A digests/
+          git add -A
           if git diff --cached --quiet; then
-            echo "нет изменений в дайджестах"
+            echo "нет изменений"
           else
-            git commit -m "chore(digests): обновление за $(TZ=Europe/Kiev date +%F)"
-            git push
+            git commit -m "chore: ежедневное обновление за $(TZ=Europe/Kiev date +%F)"
+            for i in 1 2 3 4 5; do
+              if git push; then echo "push ok"; break; fi
+              echo "push отклонён, попытка $i — rebase"; git pull --rebase --autostash; sleep 2
+            done
           fi

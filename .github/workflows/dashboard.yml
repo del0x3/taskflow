@@ -3,6 +3,8 @@ name: Доска
 on:
   issues:
     types: [opened, closed, reopened, edited, labeled, unlabeled, assigned, unassigned, milestoned, demilestoned]
+  schedule:
+    - cron: '*/30 * * * *'   # отражать перетаскивания карточек на доске
   workflow_dispatch:
 
 permissions:
@@ -33,5 +35,8 @@ jobs:
             echo "доска без изменений"
           else
             git commit -m "chore: обновление доски задач"
-            git push
+            for i in 1 2 3 4 5; do
+              if git push; then echo "push ok"; break; fi
+              echo "push отклонён, попытка $i — rebase"; git pull --rebase --autostash; sleep 2
+            done
           fi
