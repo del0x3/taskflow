@@ -29,7 +29,7 @@ while IFS=$'\t' read -r num title labels ms b64; do
   fi
   proj=$(printf '%s' "$body" | grep -oP 'github\.com/\K[^/ )]+/[^/ )]+' | head -1 || true)
   case "$labels" in *Сегодня*) today_n=$((today_n+1));; esac
-  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
+  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
     "$(pr_rank "$labels")" "$num" "$title" "$(pr_name "$labels")" "$(st_name "$labels")" "${when}${flag}" "${proj:-—}" "$(cat_name "$labels")" >> "$ROWS"
 done < "$TMP"
 
