@@ -35,14 +35,14 @@ gh issue list -R "$REPO" --state open --limit 200 --json number,body,labels \
     dl_epoch=$(TZ="$TZL" date -d "$dl_norm" +%s 2>/dev/null || echo "")
     [ -z "$dl_epoch" ] && continue
     diff_min=$(( (dl_epoch - now_epoch) / 60 ))
-    has_pre=$(printf ',%s,' "$labels" | grep -c ',notif-pre,' || true)
-    has_due=$(printf ',%s,' "$labels" | grep -c ',notif-due,' || true)
+    has_pre=$(printf ',%s,' "$labels" | grep -c ',Уведомление-до,' || true)
+    has_due=$(printf ',%s,' "$labels" | grep -c ',Уведомление-в-момент,' || true)
 
     # За 15 минут до дедлайна
     if [ "$diff_min" -gt 0 ] && [ "$diff_min" -le 15 ] && [ "$has_pre" -eq 0 ]; then
       gh issue comment "$num" -R "$REPO" --body "$MARK
 $MENTION ⏰ Через ${diff_min} мин дедлайн: $dl_norm — #$num"
-      gh issue edit "$num" -R "$REPO" --add-label notif-pre
+      gh issue edit "$num" -R "$REPO" --add-label Уведомление-до
       echo "pre-напоминание #$num"
     fi
 
@@ -50,7 +50,7 @@ $MENTION ⏰ Через ${diff_min} мин дедлайн: $dl_norm — #$num"
     if [ "$diff_min" -le 0 ] && [ "$diff_min" -ge -5 ] && [ "$has_due" -eq 0 ]; then
       gh issue comment "$num" -R "$REPO" --body "$MARK
 $MENTION ⏰ Дедлайн наступил: $dl_norm — #$num"
-      gh issue edit "$num" -R "$REPO" --add-label notif-due
+      gh issue edit "$num" -R "$REPO" --add-label Уведомление-в-момент
       echo "due-напоминание #$num"
     fi
   done

@@ -23,7 +23,7 @@ fi
 echo "::endgroup::"
 
 echo "::group::2. Роллновер незакрытых today"
-gh issue list -R "$REPO" --label today --state open --json number -q '.[].number' | while read -r n; do
+gh issue list -R "$REPO" --label Сегодня --state open --json number -q '.[].number' | while read -r n; do
   [ -z "$n" ] && continue
   gh issue edit "$n" -R "$REPO" --milestone "$today" >/dev/null 2>&1 || true
   echo "перенесён #$n -> $today"
@@ -47,11 +47,30 @@ if [ -f recurring.json ]; then
 fi
 echo "::endgroup::"
 
+echo "::group::3.5. Просрочка"
+OD=$(mktemp)
+now_e=$(date +%s)
+gh issue list -R "$REPO" --state open --limit 200 --json number,title,body,labels \
+  -q '.[] | [.number, .title, ([.labels[].name]|join(",")), (.body|@base64)] | @tsv' \
+| while IFS=$'\t' read -r n t labs b64; do
+    bd=$(printf '%s' "$b64" | base64 -d)
+    dl=$(printf '%s' "$bd" | grep -oP 'Дедлайн:\s*\K[0-9]{4}-[0-9]{2}-[0-9]{2}[ T][0-9]{2}:[0-9]{2}' | head -1 || true)
+    [ -z "$dl" ] && continue
+    dl_e=$(TZ="$TZL" date -d "${dl/T/ }" +%s 2>/dev/null || echo "")
+    [ -z "$dl_e" ] && continue
+    if [ "$dl_e" -lt "$now_e" ]; then
+      echo "- #$n $t (дедлайн $dl)" >> "$OD"
+      case ",$labs," in *,Просрочено,*) : ;; *) gh issue edit "$n" -R "$REPO" --add-label Просрочено >/dev/null 2>&1 && echo "помечен Просрочено #$n" ;; esac
+    fi
+  done
+overdue_list=$(cat "$OD"); rm -f "$OD"
+echo "::endgroup::"
+
 echo "::group::4. Дневной дайджест за $yest"
 mkdir -p digests/daily
 closed=$(gh issue list -R "$REPO" --state closed --search "closed:$yest" --json number,title -q '.[] | "- #\(.number) \(.title)"' || true)
 opened=$(gh issue list -R "$REPO" --state all --search "created:$yest" --json number,title -q '.[] | "- #\(.number) \(.title)"' || true)
-still=$(gh issue list -R "$REPO" --label today --state open --json number,title -q '.[] | "- #\(.number) \(.title)"' || true)
+still=$(gh issue list -R "$REPO" --label Сегодня --state open --json number,title -q '.[] | "- #\(.number) \(.title)"' || true)
 cat > "digests/daily/$yest.md" <<EOF
 # Дайджест за $yest
 
@@ -63,18 +82,48 @@ ${opened:-—}
 
 ## Ещё в работе (today)
 ${still:-—}
+
+## ⚠️ Просрочено
+${overdue_list:-—}
 EOF
 echo "записан digests/daily/$yest.md"
 
 # Постоянный issue «Текущий дайджест» (один, перезаписывается -> пуш)
-board=$(gh issue list -R "$REPO" --label digest-board --state open --json number -q '.[0].number' || true)
+board=$(gh issue list -R "$REPO" --label Дайджест-доска --state open --json number -q '.[0].number' || true)
 dbody=$(cat "digests/daily/$yest.md")
 if [ -z "$board" ]; then
-  gh issue create -R "$REPO" --title "📊 Текущий дайджест" --body "$dbody" --label digest-board >/dev/null
+  gh issue create -R "$REPO" --title "📊 Текущий дайджест" --body "$dbody" --label Дайджест-доска >/dev/null
   echo "создан issue «Текущий дайджест»"
 else
   gh issue edit "$board" -R "$REPO" --body "$dbody" >/dev/null
   echo "обновлён issue «Текущий дайджест» (#$board)"
+fi
+echo "::endgroup::"
+
+echo "::group::4.5. Еженедельное ревью (воскресенье)"
+if [ "$dow" = "7" ]; then
+  wkr=$(TZ="$TZL" date +%G-W%V)
+  wfrom=$(TZ="$TZL" date -d '6 days ago' +%F)
+  mkdir -p digests/reviews
+  rev_done=$(gh issue list -R "$REPO" --state closed --search "closed:>=$wfrom" --json number,title -q '.[] | "- #\(.number) \(.title)"' || true)
+  rev_open=$(gh issue list -R "$REPO" --state open --json number,title,labels -q '.[] | select([.labels[].name] | index("Дайджест-доска") | not) | "- #\(.number) \(.title)"' || true)
+  cat > "digests/reviews/$wkr.md" <<EOF
+# 🗓 Ревью недели $wkr
+
+## Сделано за неделю
+${rev_done:-—}
+
+## Ещё открыто (план на следующую неделю)
+${rev_open:-—}
+EOF
+  echo "записан digests/reviews/$wkr.md"
+  brd=$(gh issue list -R "$REPO" --label Дайджест-доска --state open --json number -q '.[0].number' || true)
+  if [ -n "$brd" ]; then
+    gh issue edit "$brd" -R "$REPO" --body "$(cat "digests/reviews/$wkr.md")" >/dev/null
+    echo "ревью отправлено в «Текущий дайджест» (#$brd) — придёт пуш"
+  fi
+else
+  echo "не воскресенье — пропуск"
 fi
 echo "::endgroup::"
 

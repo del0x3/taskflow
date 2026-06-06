@@ -1,4 +1,4 @@
-name: Reminders
+name: Напоминания
 
 on:
   schedule:
@@ -22,5 +22,5 @@ jobs:
       TZL: Europe/Kiev
     steps:
       - uses: actions/checkout@v4
-      - name: Run reminders
+      - name: Прогон напоминаний
         run: bash .github/scripts/reminders.sh
