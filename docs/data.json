@@ -1,0 +1,94 @@
+{
+  "generatedAt": "2026-06-06T14:29:19Z",
+  "kpi": {
+    "open": 8,
+    "today": 5,
+    "overdue": 1,
+    "closedToday": 0,
+    "closedWeek": 0,
+    "closedMonth": 0,
+    "completionRate": 0,
+    "avgSpentMin": 0
+  },
+  "weeks": [
+    {
+      "week": "2026-W16",
+      "created": 0,
+      "closed": 0
+    },
+    {
+      "week": "2026-W17",
+      "created": 0,
+      "closed": 0
+    },
+    {
+      "week": "2026-W18",
+      "created": 0,
+      "closed": 0
+    },
+    {
+      "week": "2026-W19",
+      "created": 0,
+      "closed": 0
+    },
+    {
+      "week": "2026-W20",
+      "created": 0,
+      "closed": 0
+    },
+    {
+      "week": "2026-W21",
+      "created": 0,
+      "closed": 0
+    },
+    {
+      "week": "2026-W22",
+      "created": 0,
+      "closed": 0
+    },
+    {
+      "week": "2026-W23",
+      "created": 8,
+      "closed": 0
+    }
+  ],
+  "categories": {
+    "Личное": 2,
+    "Работа": 6
+  },
+  "statuses": {
+    "Сегодня": 5
+  },
+  "spentByCategory": {},
+  "habits": [
+    {
+      "name": "🛏️ Застелить постель",
+      "streak": 0,
+      "doneToday": false,
+      "last7": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "overdueReasons": {
+    "объективные": 0,
+    "субъективные": 0,
+    "неуказано": 1
+  },
+  "overdueList": [
+    {
+      "num": 1,
+      "title": "Добавить данные про ФОП (spogad)",
+      "category": "Сегодня",
+      "lateHours": 0,
+      "reason": " ",
+      "type": "не указано"
+    }
+  ]
+}
