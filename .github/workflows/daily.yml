@@ -1,0 +1,39 @@
+name: Daily
+
+on:
+  schedule:
+    - cron: '0 5 * * *'   # 08:00 UTC+3
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: write
+
+concurrency:
+  group: taskflow-daily
+  cancel-in-progress: false
+
+jobs:
+  daily:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REPO: ${{ github.repository }}
+      TZL: Europe/Kiev
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run daily routine
+        run: bash .github/scripts/daily.sh
+
+      - name: Commit digest changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A digests/
+          if git diff --cached --quiet; then
+            echo "нет изменений в дайджестах"
+          else
+            git commit -m "chore(digests): обновление за $(TZ=Europe/Kiev date +%F)"
+            git push
+          fi

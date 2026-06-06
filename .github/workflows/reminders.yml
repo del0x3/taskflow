@@ -1,0 +1,25 @@
+name: Reminders
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'   # каждые 5 минут
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+concurrency:
+  group: taskflow-reminders
+  cancel-in-progress: true
+
+jobs:
+  reminders:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REPO: ${{ github.repository }}
+      TZL: Europe/Kiev
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run reminders
+        run: bash .github/scripts/reminders.sh
