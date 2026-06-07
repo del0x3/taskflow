@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-06-07T06:45:25Z",
+  "generatedAt": "2026-06-07T09:53:29Z",
   "kpi": {
     "open": 8,
-    "today": 5,
-    "overdue": 1,
+    "today": 7,
+    "overdue": 3,
     "closedToday": 0,
     "closedWeek": 0,
     "closedMonth": 0,
@@ -57,7 +57,7 @@
     "Работа": 6
   },
   "statuses": {
-    "Сегодня": 5
+    "Сегодня": 7
   },
   "spentByCategory": {},
   "habits": [
@@ -79,14 +79,30 @@
   "overdueReasons": {
     "объективные": 0,
     "субъективные": 0,
-    "неуказано": 1
+    "неуказано": 3
   },
   "overdueList": [
+    {
+      "num": 5,
+      "title": "Встреча с джуном в 21:30 (content-factory-app)",
+      "category": "Сегодня",
+      "lateHours": 15,
+      "reason": " ",
+      "type": "не указано"
+    },
+    {
+      "num": 4,
+      "title": "Подготовка по content-factory-app + задачи для джуна",
+      "category": "Сегодня",
+      "lateHours": 15,
+      "reason": " ",
+      "type": "не указано"
+    },
     {
       "num": 1,
       "title": "Добавить данные про ФОП (spogad)",
       "category": "Сегодня",
-      "lateHours": 16,
+      "lateHours": 19,
       "reason": "Просрочено потому что я делал в час который диелил приложение для ведения задач  ",
       "type": "не указано"
     }
