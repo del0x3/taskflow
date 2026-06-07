@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-07T21:55:38Z",
+  "generatedAt": "2026-06-07T22:52:49Z",
   "kpi": {
     "open": 8,
     "today": 7,
@@ -86,7 +86,7 @@
       "num": 5,
       "title": "Встреча с джуном в 21:30 (content-factory-app)",
       "category": "Сегодня",
-      "lateHours": 27,
+      "lateHours": 28,
       "reason": " ",
       "type": "не указано"
     },
@@ -94,7 +94,7 @@
       "num": 4,
       "title": "Подготовка по content-factory-app + задачи для джуна",
       "category": "Сегодня",
-      "lateHours": 27,
+      "lateHours": 28,
       "reason": " ",
       "type": "не указано"
     },
