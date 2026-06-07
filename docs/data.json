@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-07T20:41:08Z",
+  "generatedAt": "2026-06-07T21:55:38Z",
   "kpi": {
     "open": 8,
     "today": 7,
@@ -11,11 +11,6 @@
     "avgSpentMin": 0
   },
   "weeks": [
-    {
-      "week": "2026-W16",
-      "created": 0,
-      "closed": 0
-    },
     {
       "week": "2026-W17",
       "created": 0,
@@ -49,6 +44,11 @@
     {
       "week": "2026-W23",
       "created": 8,
+      "closed": 0
+    },
+    {
+      "week": "2026-W24",
+      "created": 0,
       "closed": 0
     }
   ],
@@ -86,7 +86,7 @@
       "num": 5,
       "title": "Встреча с джуном в 21:30 (content-factory-app)",
       "category": "Сегодня",
-      "lateHours": 26,
+      "lateHours": 27,
       "reason": " ",
       "type": "не указано"
     },
@@ -94,7 +94,7 @@
       "num": 4,
       "title": "Подготовка по content-factory-app + задачи для джуна",
       "category": "Сегодня",
-      "lateHours": 26,
+      "lateHours": 27,
       "reason": " ",
       "type": "не указано"
     },
@@ -102,7 +102,7 @@
       "num": 1,
       "title": "Добавить данные про ФОП (spogad)",
       "category": "Сегодня",
-      "lateHours": 30,
+      "lateHours": 32,
       "reason": "Просрочено потому что я делал в час который диелил приложение для ведения задач  ",
       "type": "не указано"
     }
