@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-07T15:07:03Z",
+  "generatedAt": "2026-06-07T16:48:14Z",
   "kpi": {
     "open": 8,
     "today": 7,
@@ -86,7 +86,7 @@
       "num": 5,
       "title": "Встреча с джуном в 21:30 (content-factory-app)",
       "category": "Сегодня",
-      "lateHours": 20,
+      "lateHours": 22,
       "reason": " ",
       "type": "не указано"
     },
@@ -94,7 +94,7 @@
       "num": 4,
       "title": "Подготовка по content-factory-app + задачи для джуна",
       "category": "Сегодня",
-      "lateHours": 21,
+      "lateHours": 22,
       "reason": " ",
       "type": "не указано"
     },
@@ -102,7 +102,7 @@
       "num": 1,
       "title": "Добавить данные про ФОП (spogad)",
       "category": "Сегодня",
-      "lateHours": 25,
+      "lateHours": 26,
       "reason": "Просрочено потому что я делал в час который диелил приложение для ведения задач  ",
       "type": "не указано"
     }
