@@ -1,0 +1,23 @@
+name: Ритуал старта
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  issues: write
+
+jobs:
+  ritual:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REPO: ${{ github.repository }}
+      NUM: ${{ github.event.issue.number }}
+      BODY: ${{ github.event.comment.body }}
+      AUTHOR: ${{ github.event.comment.user.login }}
+      TZL: Europe/Kiev
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ритуал
+        run: bash .github/scripts/ritual.sh

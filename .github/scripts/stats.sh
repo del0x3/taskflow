@@ -95,7 +95,7 @@ while read -r num; do
   oc=$(jq -r --argjson n "$num" '.[] | select(.number==$n) | [.labels[].name] | map(select(["Работа","Личное","Учёба","Здоровье","Быт"]|index(.)))|.[0]//"—"' "$ISS")
   dl=$(printf '%s' "$ob" | grep -oP 'Дедлайн:\s*\K[0-9]{4}-[0-9]{2}-[0-9]{2}[ T][0-9]{2}:[0-9]{2}' | head -1 || true)
   late=0; [ -n "$dl" ] && { de=$(TZ="$TZL" date -d "${dl/T/ }" +%s 2>/dev/null||echo "$now_e"); late=$(( (now_e - de)/3600 )); }
-  reason=$(gh api "repos/$REPO/issues/$num/comments" -q '[.[] | select(.user.login=="del0x3")] | last | .body // ""' 2>/dev/null | tr '\n' ' ' || echo "")
+  reason=$(gh api "repos/$REPO/issues/$num/comments" -q '[.[] | select(.user.login=="del0x3") | select((.body|startswith("/"))|not)] | last | .body // ""' 2>/dev/null | tr '\n' ' ' || echo "")
   rtype="не указано"
   case "$reason" in
     *объектив*|*Объектив*|*"был занят"*|*важн*|*блокер*|*блок*) rtype="объективная";;

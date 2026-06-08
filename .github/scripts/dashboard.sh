@@ -69,6 +69,8 @@ closed_today=$(gh issue list -R "$REPO" --state closed --search "closed:>=$today
   echo
   echo "📊 **[Аналитика и диаграммы]($SITE)** · обновлено $(TZ="$TZL" date '+%Y-%m-%d %H:%M')"
   echo
+  echo "🧘 _Начать работу — напиши_ \`/старт\` _в комментах ниже._"
+  echo
   echo "**Открыто:** $total · **сегодня:** $today_n · **🔥 горит:** $hot_n · **⚠️ просрочено:** $over_n"
   echo
   echo "## 🎯 Сегодня"
