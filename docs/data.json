@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-08T14:01:19Z",
+  "generatedAt": "2026-06-08T14:02:55Z",
   "kpi": {
     "open": 6,
     "today": 6,
@@ -60,8 +60,8 @@
     "Сегодня": 6
   },
   "spentByCategory": {
-    "Высокий": 0,
-    "Сегодня": 20
+    "Личное": 0,
+    "Работа": 20
   },
   "habits": [
     {
@@ -88,7 +88,7 @@
     {
       "num": 9,
       "title": "К другу к 11:45 (завтра)",
-      "category": "Сегодня",
+      "category": "Личное",
       "lateHours": 29,
       "reason": " ",
       "type": "не указано"
@@ -96,7 +96,7 @@
     {
       "num": 5,
       "title": "Встреча с джуном в 21:30 (content-factory-app)",
-      "category": "Сегодня",
+      "category": "Работа",
       "lateHours": 43,
       "reason": " ",
       "type": "не указано"
@@ -104,7 +104,7 @@
     {
       "num": 4,
       "title": "Подготовка по content-factory-app + задачи для джуна",
-      "category": "Сегодня",
+      "category": "Работа",
       "lateHours": 44,
       "reason": " ",
       "type": "не указано"
