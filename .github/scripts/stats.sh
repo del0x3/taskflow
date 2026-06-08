@@ -54,7 +54,7 @@ cats=$(jq -c "$jqf | map(select(.state==\"OPEN\")) | [.[].labels[].name] | map(s
 stats=$(jq -c "$jqf | map(select(.state==\"OPEN\")) | [.[].labels[].name] | map(select(. as \$x | [\"Сегодня\",\"В работе\",\"Заблокировано\",\"Ожидание\",\"Бэклог\"]|index(\$x))) | group_by(.) | map({key:.[0], value:length}) | from_entries" "$ISS")
 
 # ---------- Время по категориям (закрытые с tf-spent) ----------
-spentcat=$(jq -c "$jqf | map(select(.state==\"CLOSED\")) | map({c:([.labels[].name]|map(select([\"Работа\",\"Личное\",\"Учёба\",\"Здоровье\",\"Быт\"]|index(.)))|.[0]//\"Прочее\"), m:((.body|capture(\"tf-spent: (?<n>[0-9]+)\").n)//\"0\"|tonumber)}) | group_by(.c) | map({key:.[0].c, value:(map(.m)|add)}) | from_entries" "$ISS" 2>/dev/null || echo '{}')
+spentcat=$(jq -c "$jqf | map(select(.state==\"CLOSED\")) | map({c:([.labels[].name]|map(select(. as \$x|[\"Работа\",\"Личное\",\"Учёба\",\"Здоровье\",\"Быт\"]|index(\$x)))|.[0]//\"Прочее\"), m:((.body|capture(\"tf-spent: (?<n>[0-9]+)\").n)//\"0\"|tonumber)}) | group_by(.c) | map({key:.[0].c, value:(map(.m)|add)}) | from_entries" "$ISS" 2>/dev/null || echo '{}')
 
 # ---------- Привычки (стрики) ----------
 habits="[]"
@@ -92,7 +92,7 @@ while read -r num; do
   [ -z "$num" ] && continue
   ob=$(jq -r --argjson n "$num" '.[] | select(.number==$n) | .body' "$ISS")
   ot=$(jq -r --argjson n "$num" '.[] | select(.number==$n) | .title' "$ISS")
-  oc=$(jq -r --argjson n "$num" '.[] | select(.number==$n) | [.labels[].name] | map(select(["Работа","Личное","Учёба","Здоровье","Быт"]|index(.)))|.[0]//"—"' "$ISS")
+  oc=$(jq -r --argjson n "$num" '.[] | select(.number==$n) | [.labels[].name] | map(select(. as $x|["Работа","Личное","Учёба","Здоровье","Быт"]|index($x)))|.[0]//"—"' "$ISS")
   dl=$(printf '%s' "$ob" | grep -oP 'Дедлайн:\s*\K[0-9]{4}-[0-9]{2}-[0-9]{2}[ T][0-9]{2}:[0-9]{2}' | head -1 || true)
   late=0; [ -n "$dl" ] && { de=$(TZ="$TZL" date -d "${dl/T/ }" +%s 2>/dev/null||echo "$now_e"); late=$(( (now_e - de)/3600 )); }
   reason=$(gh api "repos/$REPO/issues/$num/comments" -q '[.[] | select(.user.login=="del0x3") | select((.body|startswith("/"))|not)] | last | .body // ""' 2>/dev/null | tr '\n' ' ' || echo "")
