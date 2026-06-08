@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-06-08T14:02:55Z",
+  "generatedAt": "2026-06-08T14:30:09Z",
   "kpi": {
-    "open": 6,
-    "today": 6,
-    "overdue": 3,
-    "closedToday": 3,
-    "closedWeek": 3,
-    "closedMonth": 3,
-    "completionRate": 33,
-    "avgSpentMin": 20
+    "open": 1,
+    "today": 0,
+    "overdue": 0,
+    "closedToday": 9,
+    "closedWeek": 9,
+    "closedMonth": 9,
+    "completionRate": 90,
+    "avgSpentMin": 33
   },
   "weeks": [
     {
@@ -48,20 +48,19 @@
     },
     {
       "week": "2026-W24",
-      "created": 1,
-      "closed": 3
+      "created": 2,
+      "closed": 9
     }
   ],
   "categories": {
-    "Личное": 1,
-    "Работа": 5
+    "Работа": 1
   },
   "statuses": {
-    "Сегодня": 6
+    "Ожидание": 1
   },
   "spentByCategory": {
     "Личное": 0,
-    "Работа": 20
+    "Работа": 100
   },
   "habits": [
     {
@@ -82,32 +81,7 @@
   "overdueReasons": {
     "объективные": 0,
     "субъективные": 0,
-    "неуказано": 3
+    "неуказано": 0
   },
-  "overdueList": [
-    {
-      "num": 9,
-      "title": "К другу к 11:45 (завтра)",
-      "category": "Личное",
-      "lateHours": 29,
-      "reason": " ",
-      "type": "не указано"
-    },
-    {
-      "num": 5,
-      "title": "Встреча с джуном в 21:30 (content-factory-app)",
-      "category": "Работа",
-      "lateHours": 43,
-      "reason": " ",
-      "type": "не указано"
-    },
-    {
-      "num": 4,
-      "title": "Подготовка по content-factory-app + задачи для джуна",
-      "category": "Работа",
-      "lateHours": 44,
-      "reason": " ",
-      "type": "не указано"
-    }
-  ]
+  "overdueList": []
 }
