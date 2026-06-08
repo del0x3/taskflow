@@ -37,6 +37,13 @@ mantra=$(jq -r ".mantras[$idx]" mantras.json 2>/dev/null || echo "Просто �
 
 if [ -n "$tnum" ]; then
   gh issue edit "$tnum" -R "$REPO" --add-label "В работе" >/dev/null 2>&1 || true
+  # таймер: ставим маркер старта напрямую (метка от бота не триггерит tracking.yml)
+  tbody=$(gh issue view "$tnum" -R "$REPO" --json body -q '.body' 2>/dev/null || echo "")
+  if [ -n "$tbody" ] && ! printf '%s' "$tbody" | grep -q 'tf-start:'; then
+    gh issue edit "$tnum" -R "$REPO" --body "$tbody
+
+<!-- tf-start: $(date -u +%Y-%m-%dT%H:%M:%SZ) -->" >/dev/null 2>&1 || true
+  fi
   focus="🎯 **Главное сейчас:** #$tnum — $ttitle
 _(взял в работу — таймер пошёл ⏱)_"
 else

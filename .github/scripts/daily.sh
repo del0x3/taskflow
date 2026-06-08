@@ -76,6 +76,14 @@ fi
 echo "::endgroup::"
 
 echo "::group::3.6. Привычки на сегодня"
+# закрыть незакрытые привычки прошлых дней как «Пропущено» (не копим, стрик честный)
+gh issue list -R "$REPO" --label Привычка --state open --json number,createdAt \
+  -q ".[] | select(.createdAt[0:10] < \"$today\") | .number" 2>/dev/null \
+| while read -r hn; do
+    [ -z "$hn" ] && continue
+    gh issue edit "$hn" -R "$REPO" --add-label "Пропущено" >/dev/null 2>&1 || true
+    gh issue close "$hn" -R "$REPO" -c "Прошлый день — пропущено" >/dev/null 2>&1 && echo "пропущена привычка #$hn"
+  done
 if [ -f habits.json ]; then
   hc=$(jq '.habits | length' habits.json)
   j=0

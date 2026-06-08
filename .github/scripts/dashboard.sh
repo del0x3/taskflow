@@ -59,7 +59,7 @@ emit_table(){ # $1=фильтр-секция $2=ключ-сортировки(ra
 # привычки на сегодня
 hab=$(gh issue list -R "$REPO" --label Привычка --state all --search "created:$today" --json title,state \
   -q '[.[] | (if .state=="CLOSED" then "✅ " else "⬜ " end) + .title] | join(" · ")' 2>/dev/null || true)
-hdone=$(gh issue list -R "$REPO" --label Привычка --state closed --search "created:$today" --json number -q 'length' 2>/dev/null || echo 0)
+hdone=$(gh issue list -R "$REPO" --label Привычка --state closed --search "created:$today" --json number,labels -q '[.[] | select([.labels[].name]|index("Пропущено")|not)] | length' 2>/dev/null || echo 0)
 htot=$(gh issue list -R "$REPO" --label Привычка --state all --search "created:$today" --json number -q 'length' 2>/dev/null || echo 0)
 
 total=$(grep -c . "$ROWS" || echo 0)

@@ -67,7 +67,7 @@ if [ -f habits.json ]; then
     hemoji=$(jq -r ".habits[$j].emoji // \"🔁\"" habits.json)
     htitle="$hemoji $hname"
     # даты закрытий этой привычки
-    dates=$(jq -r --arg t "$htitle" '.[] | select(.title==$t) | select(.state=="CLOSED") | (.closedAt[0:10])' "$ISS" | sort -u)
+    dates=$(jq -r --arg t "$htitle" '.[] | select(.title==$t) | select(.state=="CLOSED") | select([.labels[].name]|index("Пропущено")|not) | (.createdAt[0:10])' "$ISS" | sort -u)
     doneToday=false; printf '%s\n' "$dates" | grep -q "^$today$" && doneToday=true
     # стрик: считаем подряд дни назад (сегодня если closed, иначе со вчера)
     streak=0; d="$today"
