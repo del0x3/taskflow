@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-06-08T12:12:05Z",
+  "generatedAt": "2026-06-08T14:01:19Z",
   "kpi": {
-    "open": 8,
-    "today": 8,
-    "overdue": 4,
-    "closedToday": 0,
-    "closedWeek": 0,
-    "closedMonth": 0,
-    "completionRate": 0,
-    "avgSpentMin": 0
+    "open": 6,
+    "today": 6,
+    "overdue": 3,
+    "closedToday": 3,
+    "closedWeek": 3,
+    "closedMonth": 3,
+    "completionRate": 33,
+    "avgSpentMin": 20
   },
   "weeks": [
     {
@@ -48,18 +48,21 @@
     },
     {
       "week": "2026-W24",
-      "created": 0,
-      "closed": 0
+      "created": 1,
+      "closed": 3
     }
   ],
   "categories": {
-    "Личное": 2,
-    "Работа": 6
+    "Личное": 1,
+    "Работа": 5
   },
   "statuses": {
-    "Сегодня": 8
+    "Сегодня": 6
   },
-  "spentByCategory": {},
+  "spentByCategory": {
+    "Высокий": 0,
+    "Сегодня": 20
+  },
   "habits": [
     {
       "name": "🛏️ Застелить постель",
@@ -79,14 +82,14 @@
   "overdueReasons": {
     "объективные": 0,
     "субъективные": 0,
-    "неуказано": 4
+    "неуказано": 3
   },
   "overdueList": [
     {
       "num": 9,
       "title": "К другу к 11:45 (завтра)",
       "category": "Сегодня",
-      "lateHours": 27,
+      "lateHours": 29,
       "reason": " ",
       "type": "не указано"
     },
@@ -94,7 +97,7 @@
       "num": 5,
       "title": "Встреча с джуном в 21:30 (content-factory-app)",
       "category": "Сегодня",
-      "lateHours": 41,
+      "lateHours": 43,
       "reason": " ",
       "type": "не указано"
     },
@@ -102,16 +105,8 @@
       "num": 4,
       "title": "Подготовка по content-factory-app + задачи для джуна",
       "category": "Сегодня",
-      "lateHours": 42,
+      "lateHours": 44,
       "reason": " ",
-      "type": "не указано"
-    },
-    {
-      "num": 1,
-      "title": "Добавить данные про ФОП (spogad)",
-      "category": "Сегодня",
-      "lateHours": 46,
-      "reason": "Просрочено потому что я делал в час который диелил приложение для ведения задач  ",
       "type": "не указано"
     }
   ]
