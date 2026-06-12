@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-12T18:21:58Z",
+  "generatedAt": "2026-06-12T19:08:23Z",
   "kpi": {
     "open": 3,
     "today": 2,
@@ -8,7 +8,7 @@
     "closedWeek": 11,
     "closedMonth": 11,
     "completionRate": 78,
-    "avgSpentMin": 47
+    "avgSpentMin": 62
   },
   "weeks": [
     {
@@ -61,7 +61,7 @@
   },
   "spentByCategory": {
     "Личное": 0,
-    "Работа": 190
+    "Работа": 250
   },
   "habits": [
     {
