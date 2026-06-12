@@ -2,7 +2,7 @@ name: Вечерний итог
 
 on:
   schedule:
-    - cron: '0 18 * * *'   # 21:00 UTC+3
+    - cron: '0 18 * * *'
   workflow_dispatch:
 
 permissions:
@@ -21,8 +21,7 @@ jobs:
           if [ "$n" -gt 0 ]; then
             list=$(gh issue list -R "$REPO" --label "Сегодня" --state open --json number,title -q '[.[] | "#\(.number) \(.title)"] | join("; ")')
             brd=$(gh issue list -R "$REPO" --label "Доска" --state open --json number -q '.[0].number')
-            [ -n "$brd" ] && gh issue comment "$brd" -R "$REPO" --body "<!-- tf-reminder -->
-@del0x3 🌙 Итог дня: осталось $n задач на сегодня — $list"
+            [ -n "$brd" ] && gh issue comment "$brd" -R "$REPO" --body "<!-- tf-reminder --> @del0x3 🌙 Итог дня: осталось $n задач на сегодня — $list"
           else
             echo "всё закрыто 🎉"
           fi

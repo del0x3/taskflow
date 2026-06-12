@@ -2,7 +2,7 @@ name: Канарейка
 
 on:
   schedule:
-    - cron: '0 6 * * *'   # 09:00 UTC+3, через час после ежедневного прогона
+    - cron: '0 6 * * *'
   workflow_dispatch:
 
 permissions:
@@ -25,8 +25,7 @@ jobs:
           echo "daily: conclusion=$concl, $age ч назад"
           if [ "$concl" != "success" ] || [ "$age" -gt 26 ]; then
             brd=$(gh issue list -R "$REPO" --label "Доска" --state open --json number -q '.[0].number')
-            [ -n "$brd" ] && gh issue comment "$brd" -R "$REPO" --body "<!-- tf-reminder -->
-@del0x3 ⚠️ Автоматика TaskFlow: ежедневный прогон '$concl' ($age ч назад). Проверь вкладку Actions."
+            [ -n "$brd" ] && gh issue comment "$brd" -R "$REPO" --body "<!-- tf-reminder --> @del0x3 ⚠️ Автоматика TaskFlow: ежедневный прогон '$concl' ($age ч назад). Проверь вкладку Actions."
           else
             echo "всё здорово ✅"
           fi
