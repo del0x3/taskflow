@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-06-12T05:11:12Z",
+  "generatedAt": "2026-06-12T09:39:08Z",
   "kpi": {
-    "open": 1,
-    "today": 0,
+    "open": 3,
+    "today": 2,
     "overdue": 0,
-    "closedToday": 0,
-    "closedWeek": 9,
-    "closedMonth": 9,
-    "completionRate": 90,
-    "avgSpentMin": 33
+    "closedToday": 1,
+    "closedWeek": 10,
+    "closedMonth": 10,
+    "completionRate": 76,
+    "avgSpentMin": 27
   },
   "weeks": [
     {
@@ -48,19 +48,20 @@
     },
     {
       "week": "2026-W24",
-      "created": 2,
-      "closed": 9
+      "created": 5,
+      "closed": 10
     }
   ],
   "categories": {
-    "Работа": 1
+    "Работа": 3
   },
   "statuses": {
-    "Ожидание": 1
+    "Ожидание": 1,
+    "Сегодня": 2
   },
   "spentByCategory": {
     "Личное": 0,
-    "Работа": 100
+    "Работа": 111
   },
   "habits": [
     {
