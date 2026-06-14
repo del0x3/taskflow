@@ -1,21 +1,16 @@
 {
-  "generatedAt": "2026-06-14T20:02:18Z",
+  "generatedAt": "2026-06-14T21:46:49Z",
   "kpi": {
     "open": 3,
     "today": 2,
     "overdue": 0,
     "closedToday": 0,
-    "closedWeek": 11,
+    "closedWeek": 2,
     "closedMonth": 11,
     "completionRate": 78,
     "avgSpentMin": 62
   },
   "weeks": [
-    {
-      "week": "2026-W17",
-      "created": 0,
-      "closed": 0
-    },
     {
       "week": "2026-W18",
       "created": 0,
@@ -50,6 +45,11 @@
       "week": "2026-W24",
       "created": 6,
       "closed": 11
+    },
+    {
+      "week": "2026-W25",
+      "created": 0,
+      "closed": 0
     }
   ],
   "categories": {
