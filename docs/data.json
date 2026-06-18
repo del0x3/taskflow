@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-06-18T20:02:58Z",
+  "generatedAt": "2026-06-18T22:27:42Z",
   "kpi": {
     "open": 3,
     "today": 2,
     "overdue": 0,
     "closedToday": 0,
-    "closedWeek": 2,
+    "closedWeek": 0,
     "closedMonth": 11,
     "completionRate": 78,
     "avgSpentMin": 62
