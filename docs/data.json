@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-07-11T20:34:58Z",
+  "generatedAt": "2026-07-11T21:35:52Z",
   "kpi": {
     "open": 3,
     "today": 2,
     "overdue": 0,
     "closedToday": 0,
     "closedWeek": 0,
-    "closedMonth": 2,
+    "closedMonth": 0,
     "completionRate": 78,
     "avgSpentMin": 62
   },
