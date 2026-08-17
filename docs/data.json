@@ -1,0 +1,88 @@
+{
+  "generatedAt": "2026-08-17T18:17:57Z",
+  "kpi": {
+    "open": 3,
+    "today": 2,
+    "overdue": 0,
+    "closedToday": 0,
+    "closedWeek": 0,
+    "closedMonth": 0,
+    "completionRate": 78,
+    "avgSpentMin": 62
+  },
+  "weeks": [
+    {
+      "week": "2026-W27",
+      "created": 0,
+      "closed": 0
+    },
+    {
+      "week": "2026-W28",
+      "created": 0,
+      "closed": 0
+    },
+    {
+      "week": "2026-W29",
+      "created": 0,
+      "closed": 0
+    },
+    {
+      "week": "2026-W30",
+      "created": 0,
+      "closed": 0
+    },
+    {
+      "week": "2026-W31",
+      "created": 0,
+      "closed": 0
+    },
+    {
+      "week": "2026-W32",
+      "created": 0,
+      "closed": 0
+    },
+    {
+      "week": "2026-W33",
+      "created": 0,
+      "closed": 0
+    },
+    {
+      "week": "2026-W34",
+      "created": 0,
+      "closed": 0
+    }
+  ],
+  "categories": {
+    "Работа": 3
+  },
+  "statuses": {
+    "Ожидание": 1,
+    "Сегодня": 2
+  },
+  "spentByCategory": {
+    "Личное": 0,
+    "Работа": 250
+  },
+  "habits": [
+    {
+      "name": "🛏️ Застелить постель",
+      "streak": 0,
+      "doneToday": false,
+      "last7": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "overdueReasons": {
+    "объективные": 0,
+    "субъективные": 0,
+    "неуказано": 0
+  },
+  "overdueList": []
+}
