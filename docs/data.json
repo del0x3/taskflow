@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-06T19:19:18Z",
+  "generatedAt": "2026-09-06T21:28:20Z",
   "kpi": {
     "open": 3,
     "today": 2,
@@ -11,11 +11,6 @@
     "avgSpentMin": 62
   },
   "weeks": [
-    {
-      "week": "2026-W29",
-      "created": 0,
-      "closed": 0
-    },
     {
       "week": "2026-W30",
       "created": 0,
@@ -48,6 +43,11 @@
     },
     {
       "week": "2026-W36",
+      "created": 0,
+      "closed": 0
+    },
+    {
+      "week": "2026-W37",
       "created": 0,
       "closed": 0
     }
